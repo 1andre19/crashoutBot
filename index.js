@@ -1,8 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Events, GatewayIntentBits, Collection, MessageFlags } = require('discord.js');
-const { token } = require('./config.json');
 const { handleGithubEvent } = require('./githubNotifier');
+require('dotenv').config();
 
 // Create a new client instance
 const client = new Client({ intents: [
@@ -63,17 +63,17 @@ app.post('/webhooks/github', async (req, res) => {
     console.log(`Github webhook received of type ${event}`);
     console.log(payload);
 
-    if (!targetChannel) {
+    if (!client.targetChannel) {
         console.error('Channel not ready');
         return res.status(500).send('Discord channel not ready');
     }
 
-    await handleGithubEvent(event, payload, targetChannel);
+    await handleGithubEvent(event, payload, client.targetChannel);
 
     res.status(200).send('Webhook received');
 });
 
-client.login(token);
+client.login(process.env.TOKEN);
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
