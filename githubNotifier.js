@@ -33,8 +33,8 @@ async function handleGithubEvent(event, payload, channel) {
                 `**Messages:**\n${commitMessage}`,
                 ),
             )
-            .addMediaGalleryComponents((mediaGalleryItem) =>
-                mediaGalleryItem
+            .setThumbnailAccessory((thumb) =>
+                thumb
                     .setDescription(`github profile picture of ${pusher}`)
                     .setURL(avatarUrl),
             ),
