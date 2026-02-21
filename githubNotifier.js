@@ -8,6 +8,7 @@ async function handleGithubEvent(event, payload, channel) {
 
     const repo = payload.repository?.full_name;
     const pusher = payload.pusher?.name;
+    const avatarUrl = payload.sender?.avatar_url;
     const commits = Array.isArray(payload.commits) ? payload.commits : [];
     const commitMessage =
     commits.length > 0
@@ -25,9 +26,17 @@ async function handleGithubEvent(event, payload, channel) {
             ),
         )
         .addSeparatorComponents((separator) => separator)
-        .addTextDisplayComponents((textDisplay) =>
-            textDisplay.setContent(
-            `**Messages:**\n${commitMessage}`,
+        .addSectionComponents((section) =>
+            section
+            .addTextDisplayComponents((textDisplay) =>
+                textDisplay.setContent(
+                `**Messages:**\n${commitMessage}`,
+                ),
+            )
+            .addMediaGalleryComponents((mediaGalleryItem) =>
+                mediaGalleryItem
+                    .setDescription(`github profile picture of ${pusher}`)
+                    .setURL(avatarUrl),
             ),
         );
 
