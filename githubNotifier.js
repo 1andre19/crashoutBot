@@ -7,13 +7,17 @@ async function handleGithubEvent(event, payload, channel) {
 
     const repo = payload.repository?.full_name;
     const pusher = payload.pusher?.name;
-    const commits = payload.commits?.length || 0;
-    const commitMessage = payload.commits?.message;
+    const commits = Array.isArray(payload.commits) ? payload.commits : [];
+    const commitMessage =
+    commits.length > 0
+        ? commits
+            .map(c => `• ${c.message?.split('\n')[0] || '(no message)'}`)
+            .join('\n')
+        : '(no commits in payload)';
 
-    const message = `Push detected in ${repo} by ${pusher}. ${commits} commit(s).`;
 
     const gitPushContainer = new ContainerBuilder()
-        .setAccentColor(f2af5c)
+        .setAccentColor(0xf2af5c)
         .addTextDisplayComponents((textDisplay) =>
             textDisplay.setContent(
             `Push by **${pusher}** in repo: **${repo}**.`,
@@ -22,8 +26,7 @@ async function handleGithubEvent(event, payload, channel) {
         .addSeparatorComponents((separator) => separator)
         .addTextDisplayComponents((textDisplay) =>
             textDisplay.setContent(
-            `**Message**:
-            ${commitMessage}`,
+            `**Messages:**\n${commitMessage}`,
             ),
         );
 
