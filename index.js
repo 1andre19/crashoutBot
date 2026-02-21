@@ -63,7 +63,6 @@ app.post('/webhooks/github', async (req, res) => {
     const payload = req.body;
 
     console.log(`Github webhook received of type ${event}`);
-    console.log(payload);
 
     if (!client.targetChannel) {
         console.error('Channel not ready');
